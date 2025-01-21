@@ -4,8 +4,6 @@ package cibernarium.virtualPetBackEnd.pet;
 import cibernarium.virtualPetBackEnd.user.User;
 import cibernarium.virtualPetBackEnd.user.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,8 +42,8 @@ public class PetService {
         return petRepository.save(pet);
     }
 
-    public List<Pet> getAllPets() {
-        return petRepository.findAll(); // Llama al repositorio para obtener todas las mascotas
+    public List<Pet> getUserPets(Long ownerId) {
+        return petRepository.findByOwnerId(ownerId); // Filtra las mascotas por ownerId
     }
 
     public Pet updatePet(Long id, Pet updatedPet) {

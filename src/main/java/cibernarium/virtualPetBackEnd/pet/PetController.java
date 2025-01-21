@@ -3,13 +3,9 @@ package cibernarium.virtualPetBackEnd.pet;
 
 import cibernarium.virtualPetBackEnd.user.User;
 import cibernarium.virtualPetBackEnd.user.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,8 +60,8 @@ public class PetController {
 
     //Mostra totes les mascotes virtuals existents en un entorn virtual vibrants i colorit. Els usuaris poden interactuar amb les seves mascotes, veure el seu estat d'ànim, nivell d'energia i necessitats.
 //    @GetMapping("/pets")
-//    public ResponseEntity<List<Pet>> getAllPets() {
-//        List<Pet> pets = petService.getAllPets(); // Llama al servicio para obtener todas las mascotas
+//    public ResponseEntity<List<Pet>> getUserPets() {
+//        List<Pet> pets = petService.getUserPets(); // Llama al servicio para obtener todas las mascotas
 //
 //        if (pets.isEmpty()) {
 //            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Devuelve un 204 si no hay mascotas
@@ -76,12 +72,14 @@ public class PetController {
 
     // FLUJO ROTO IDGAF!!! retrieve directo desde la db
     @GetMapping("/pets")
-    public ResponseEntity<List<Pet>> getAllPets() {
-        List<Pet> pets = petService.getAllPets();
+    public ResponseEntity<List<Pet>> getPetsByOwner(@RequestParam Long ownerId) {
+        List<Pet> pets = petService.getUserPets(ownerId);  // Llamada al servicio con ownerId
+
         if (pets.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();  // 204 si no hay mascotas
+            return ResponseEntity.noContent().build(); // Retorna 204 si no hay mascotas
         }
-        return ResponseEntity.ok(pets);  // 200 OK con la lista de mascotas
+
+        return ResponseEntity.ok(pets);  // Retorna las mascotas con código 200 OK
     }
     //
     //Actualitzar (Update):

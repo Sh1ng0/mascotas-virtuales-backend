@@ -55,50 +55,6 @@ import java.util.List;
     }
 
 
-//    @Bean
-//    public UserDetailsService userDetailService() {
-//        return username -> {
-//            // Recuperar el usuario de la base de datos
-//            User user = userRepository.findByUsername(username)
-//                    .orElseGet(() -> {
-//                        // Si no se encuentra el usuario, creamos uno por defecto
-//                        User defaultUser = new User();
-//                        defaultUser.setUsername("defaultUser");  // Nombre por defecto
-//                        defaultUser.setPassword(passwordEncoder().encode("defaultPassword"));  // Contraseña por defecto
-//                        defaultUser.setRoles(List.of(Role.USER));  // Asignamos un rol por defecto (USER)
-//
-//                        return defaultUser;
-//                    });
-//
-//            return new org.springframework.security.core.userdetails.User(
-//                    user.getUsername(),
-//                    user.getPassword(),
-//                    user.getAuthorities()  // Usar los roles como Authorities
-//            );
-//        };
-
-
-//    @Bean
-//    public UserDetailsService userDetailService() {
-//        return username -> {
-//            // Recuperar el usuario de la base de datos
-//            User user = userRepository.findByUsername(username)
-//                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-//
-//            // Si el usuario no tiene roles asignados, asigna un rol por defecto (por ejemplo, "USER")
-//            if (user.getRoles() == null || user.getRoles().isEmpty()) {
-//                user.setRoles(List.of(Role.USER));  // Asignar un rol por defecto
-//            }
-//
-//            return new org.springframework.security.core.userdetails.User(
-//                    user.getUsername(),
-//                    user.getPassword(),
-//                    user.getAuthorities()  // Usar los roles como Authorities
-//            );
-//        };
-//    }
-
-
 
 
 
