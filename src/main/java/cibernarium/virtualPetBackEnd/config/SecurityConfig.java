@@ -84,7 +84,7 @@ public class SecurityConfig{
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/pet/**").hasAuthority("0")
+                                .requestMatchers("/pet/**").hasAuthority("USER")
 //                                .requestMatchers("/pet/**").authenticated() // Permitir rutas de autenticación
                                 .anyRequest().authenticated() // Todas las demás rutas requieren autenticación
                 )

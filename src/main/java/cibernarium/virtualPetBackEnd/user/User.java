@@ -38,13 +38,14 @@ public class User implements UserDetails {
     String country;
 //    private List<Role> roles;
 
+    @Enumerated(EnumType.STRING)
+    Role role;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets;
     // Esto hace que el enum (Que por defecto se guarda como su valor numérico, se guarde como un string en este caso)
 
-    @Enumerated(EnumType.ORDINAL)  // Almacena el ordinal (índice) del enum
-    private Role role;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

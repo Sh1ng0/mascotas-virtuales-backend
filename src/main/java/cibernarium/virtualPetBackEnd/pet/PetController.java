@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @Controller
@@ -25,21 +28,22 @@ public class PetController {
     private final PetService petService;
     private final UserRepository userRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(PetController.class);
+
     //Crear (Create):
     //
     //Permet als usuaris crear noves mascotes virtuals per cuidar i mimar. Poden triar entre una varietat de criatures, des de dracs fins a licorns, i fins i tot extraterrestres. Després, poden personalitzar el color, el nom i les característiques úniques de la seva mascota.
 
 
-//    @PostMapping("/addPet")
+    //    @PostMapping("/addPet")
 //    public ResponseEntity<Pet> addPet(@RequestBody Pet pet) {
 //        pet.setHunger(0); // Forzar el hambre a 0 al crear
 //        System.out.println("Recibiendo datos de mascota: " + pet);
 //        Pet savedPet = petService.addPet(pet);
 //        return new ResponseEntity<>(savedPet, HttpStatus.CREATED);
 //    }
-
     @PostMapping("/addPet")
-    public Pet addPet(@RequestBody Pet pet) {
+    public ResponseEntity<Pet> addPet(@RequestBody Pet pet) {
         // Recuperar el usuario propietario a partir del ownerId proporcionado
         Long ownerId = pet.getOwner().getId();
         User owner = userRepository.findById(ownerId)
@@ -49,45 +53,36 @@ public class PetController {
         pet.setOwner(owner);
 
         // Guardar la mascota
-        return petService.addPet(pet);
+        Pet savedPet = petService.addPet(pet);
+        logger.info("Mascota guardada con éxito - ID: {}, Nombre: {}, Tipo: {}, Color: {}, OwnerID: {}",
+                savedPet.getId(), savedPet.getName(), savedPet.getType(), savedPet.getColor(), ownerId);
+        logger.info("Id del owner: {}", ownerId);
+
+        // Devolver la mascota creada con el código de estado 201 (CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPet);
     }
 
-//    Correlación en el FRONT
-
-    // const pet = {
-    //    name: "Fido",
-    //    hunger: 5,
-    //    color: "RED" // Suponiendo que 'color' es un valor de enum que se puede enviar como String
-    //};
-    //
-    //fetch("http://localhost:8080/addPet", {
-    //    method: "POST",
-    //    headers: {
-    //        "Content-Type": "application/json",
-    //    },
-    //    body: JSON.stringify(pet),
-    //})
-    //.then(response => response.json())
-    //.then(data => console.log("Mascota creada:", data))
-    //.catch(error => console.error("Error al crear la mascota:", error));
-
-
-    //
-    //Llegir (Read):
-    //
     //Mostra totes les mascotes virtuals existents en un entorn virtual vibrants i colorit. Els usuaris poden interactuar amb les seves mascotes, veure el seu estat d'ànim, nivell d'energia i necessitats.
+//    @GetMapping("/pets")
+//    public ResponseEntity<List<Pet>> getAllPets() {
+//        List<Pet> pets = petService.getAllPets(); // Llama al servicio para obtener todas las mascotas
+//
+//        if (pets.isEmpty()) {
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Devuelve un 204 si no hay mascotas
+//        }
+//
+//        return new ResponseEntity<>(pets, HttpStatus.OK); // Devuelve las mascotas con un 200 OK
+//    }
+
+    // FLUJO ROTO IDGAF!!! retrieve directo desde la db
     @GetMapping("/pets")
     public ResponseEntity<List<Pet>> getAllPets() {
-        List<Pet> pets = petService.getAllPets(); // Llama al servicio para obtener todas las mascotas
-
+        List<Pet> pets = petService.getAllPets();
         if (pets.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Devuelve un 204 si no hay mascotas
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();  // 204 si no hay mascotas
         }
-
-        return new ResponseEntity<>(pets, HttpStatus.OK); // Devuelve las mascotas con un 200 OK
+        return ResponseEntity.ok(pets);  // 200 OK con la lista de mascotas
     }
-
-
     //
     //Actualitzar (Update):
     //
