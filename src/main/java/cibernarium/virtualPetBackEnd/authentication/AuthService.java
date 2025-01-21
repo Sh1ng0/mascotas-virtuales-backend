@@ -23,35 +23,42 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-
     public AuthResponse login(LoginRequest request) {
+        // Authenticate the user
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
-        UserDetails user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-        String token = jwtService.getToken(user);
+        // Fetch the user details
+        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+
+        // Generate the JWT token with user_id
+        String token = jwtService.getToken(user, user.getId());
+
         return AuthResponse.builder()
                 .token(token)
-                .build ();
-
-
+                .build();
     }
 
-
     public AuthResponse register(RegisterRequest request) {
+        // Create a new user
         User user = User.builder()
                 .username(request.getUsername())
-                .password(passwordEncoder.encode( request.getPassword()))
+                .password(passwordEncoder.encode(request.getPassword()))
                 .firstname(request.getFirstname())
-                .lastname(request.lastname)
+                .lastname(request.getLastname())
                 .country(request.getCountry())
                 .role(Role.USER)
                 .build();
 
+        // Save the user to the database
         userRepository.save(user);
 
-        return AuthResponse.builder()
-                .token(jwtService.getToken(user))
-                .build();
+        // Generate the JWT token with user_id
+        String token = jwtService.getToken(user, user.getId());
 
+        return AuthResponse.builder()
+                .token(token)
+                .build();
     }
 }

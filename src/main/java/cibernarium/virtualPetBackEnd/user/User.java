@@ -26,9 +26,9 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Basic
+
     @Column(nullable = false)
     String username;
     @Column(nullable = false)

@@ -28,16 +28,20 @@ public class JwtService {
     private static final String SECRET_KEY = "4Bd23Gk1M8wD2R0zI7eV9C1qF8yT3JvD5U2Kz0LhZ7PpK1Q";
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
-    public String getToken(UserDetails user) {
+    // Add userId to the token payload
+    public String getToken(UserDetails user, Long userId) {
         logger.debug("Generando token para el usuario: " + user.getUsername());
-        return getToken(new HashMap<>(), user);
+        return getToken(new HashMap<>(), user, userId);
     }
 
-    private String getToken(Map<String, Object> extraClaims, UserDetails user) {
-
+    private String getToken(Map<String, Object> extraClaims, UserDetails user, Long userId) {
+        // Add authorities to the token payload
         extraClaims.put("authorities", user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList());
+
+        // Add user_id to the token payload
+        extraClaims.put("user_id", userId);
 
         String token = Jwts
                 .builder()
@@ -63,6 +67,14 @@ public class JwtService {
         String username = getClaim(token, Claims::getSubject);
         logger.debug("Username extraído: " + username);
         return username;
+    }
+
+    // Add method to extract user_id from the token
+    public Long getUserIdFromToken(String token) {
+        logger.debug("Extrayendo user_id del token: " + token);
+        Long userId = getClaim(token, claims -> claims.get("user_id", Long.class));
+        logger.debug("User_id extraído: " + userId);
+        return userId;
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
